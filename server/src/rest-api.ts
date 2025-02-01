@@ -163,7 +163,7 @@ app.get("/api/share/:shortId", async (req, res) => {
 
   if (now > secret.expiresAt) {
     await db("secrets").where({ shortId }).del();
-    res.status(StatusCodes.GONE).json({ message: "Secret has expired" });
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Secret has expired" });
     return;
   }
 
