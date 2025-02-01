@@ -22,7 +22,7 @@ services:
         condition: service_healthy
     build:
       context: ./server
-      dockerfile: Dockerfile.dev
+      dockerfile: dev.Dockerfile
     env_file: .env
     environment:
       - DB_CONNECTION_URI=postgres://infisical:infisical@db/infisical?sslmode=disable
@@ -34,7 +34,7 @@ services:
     container_name: dev-api
     build:
       context: ./server
-      dockerfile: Dockerfile.dev
+      dockerfile: dev.Dockerfile
     depends_on:
       db:
         condition: service_started
@@ -60,7 +60,7 @@ services:
       - backend
     build:
       context: ./client
-      dockerfile: Dockerfile.dev
+      dockerfile: dev.Dockerfile
     ports:
       - 3000:3000
     volumes:
