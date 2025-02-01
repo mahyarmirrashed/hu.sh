@@ -40,23 +40,22 @@ const SHORT_ID_LENGTH = 8;
 function calculateExpirationDatetime(expiration: Expiration): string {
   const now = new Date();
 
-  // milliseconds multiplier
-  let multiplier = 1;
+  let offset = 0;
 
   switch (expiration.value) {
     case "m":
-      multiplier = 60 * 1000;
+      offset = Math.min(expiration.amount, 60) * 60 * 1000;
       break;
     case "h":
-      multiplier = 60 * 60 * 1000;
+      offset = Math.min(expiration.amount, 24) * 60 * 60 * 1000;
       break;
     case "d":
-      multiplier = 24 * 60 * 60 * 1000;
+      offset = Math.min(expiration.amount, 7) * 24 * 60 * 60 * 1000;
       break;
   }
 
   // NOTE: ISO string makes it so that we are consistent in all regions of the world
-  return new Date(now.getTime() + expiration.amount * multiplier).toISOString();
+  return new Date(now.getTime() + offset).toISOString();
 }
 
 /**
