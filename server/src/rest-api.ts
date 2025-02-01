@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import sss from "shamirs-secret-sharing";
 import { z } from "zod";
 import { randomFillSync } from "crypto";
+import { StatusCodes } from "http-status-codes";
 
 // Configure environment variables
 dotenv.config();
@@ -113,7 +114,7 @@ app.post("/api/create", async (req, res) => {
   const parsed = secretCreationSchema.safeParse(req.body);
   if (!parsed.success) {
     const error = parsed.error.errors.map((e) => e.message).join(", ");
-    res.status(400).json({ message: error });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error });
     return;
   }
 
@@ -153,7 +154,7 @@ app.get("/api/secrets/:shortId", async (req, res) => {
 
   const secret = await db("secrets").where({ shortId }).first();
   if (!secret) {
-    res.status(404).json({ message: "Secret not found" });
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Secret not found" });
     return;
   }
 
@@ -162,12 +163,12 @@ app.get("/api/secrets/:shortId", async (req, res) => {
 
   if (now > secret.expiresAt) {
     await db("secrets").where({ shortId }).del();
-    res.status(410).json({ message: "Secret has expired" });
+    res.status(StatusCodes.GONE).json({ message: "Secret has expired" });
     return;
   }
 
   if (secret.hash) {
-    res.status(401).json({ message: "Password required" });
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: "Password required" });
     return;
   }
 
@@ -187,32 +188,34 @@ app.post("/api/secrets/:shortId", async (req, res) => {
   const parsed = secretRetrievalSchema.safeParse(req.body);
   if (!parsed.success) {
     const error = parsed.error.errors.map((e) => e.message).join(", ");
-    res.status(400).json({ message: error });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error });
     return;
   }
   const { password } = parsed.data;
 
   const secret = await db("secrets").where({ shortId }).first();
   if (!secret) {
-    res.status(404).json({ message: "Secret not found" });
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Secret not found" });
     return;
   }
 
   const now = new Date().toISOString();
   if (now > secret.expiresAt) {
     await db("secrets").where({ shortId }).del();
-    res.status(410).json({ message: "Secret has expired" });
+    res.status(StatusCodes.GONE).json({ message: "Secret has expired" });
     return;
   }
 
   if (!secret.hash) {
-    res.status(400).json({ message: "Secret is not password protected" });
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "Secret is not password protected" });
     return;
   }
 
   const valid = await bcrypt.compare(password, secret.hash);
   if (!valid) {
-    res.status(403).json({ message: "Incorrect password" });
+    res.status(StatusCodes.FORBIDDEN).json({ message: "Incorrect password" });
     return;
   }
 
