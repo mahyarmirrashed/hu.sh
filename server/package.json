@@ -12,7 +12,8 @@
     "migration:latest": "knex --knexfile ./src/db/knexfile.js --client pg migrate:latest",
     "migration:status": "knex --knexfile ./src/db/knexfile.js --client pg migrate:status",
     "migration:rollback": "knex --knexfile ./src/db/knexfile.js migrate:rollback",
-    "migration:unlock": "knex --knexfile ./src/db/knexfile.js migrate:unlock"
+    "migration:unlock": "knex --knexfile ./src/db/knexfile.js migrate:unlock",
+    "test": "vitest"
   },
   "author": "",
   "license": "ISC",
@@ -35,7 +36,10 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.10.7",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
   }
 }
