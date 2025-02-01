@@ -1,8 +1,3 @@
-const {
-  createOnUpdateTrigger,
-  dropOnUpdateTrigger,
-} = require("../util/db-util");
-
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
