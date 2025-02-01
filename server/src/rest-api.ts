@@ -146,10 +146,10 @@ app.post("/api/create", async (req, res) => {
 });
 
 /**
- * GET /api/secrets/:shortId
+ * GET /api/share/:shortId
  * Retrieves a secret that is not password-protected.
  */
-app.get("/api/secrets/:shortId", async (req, res) => {
+app.get("/api/share/:shortId", async (req, res) => {
   const { shortId } = req.params;
 
   const secret = await db("secrets").where({ shortId }).first();
@@ -176,14 +176,14 @@ app.get("/api/secrets/:shortId", async (req, res) => {
 });
 
 /**
- * POST /api/secrets/:shortId
+ * POST /api/share/:shortId
  * Retrieves a password-protected secret.
  * Expected JSON body:
  * {
  *   password: string
  * }
  */
-app.post("/api/secrets/:shortId", async (req, res) => {
+app.post("/api/share/:shortId", async (req, res) => {
   const { shortId } = req.params;
   const parsed = secretRetrievalSchema.safeParse(req.body);
   if (!parsed.success) {
