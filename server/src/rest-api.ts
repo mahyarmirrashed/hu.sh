@@ -112,7 +112,7 @@ app.get("/api/share/:shortId", async (req, res) => {
     return;
   }
 
-  res.json({ content: reassembleSecret(secret.fragments) });
+  res.json({ content: reassembleSecret(JSON.parse(secret.fragments)) });
 });
 
 /**
@@ -159,7 +159,7 @@ app.post("/api/share/:shortId", async (req, res) => {
     return;
   }
 
-  res.json({ content: reassembleSecret(secret.fragments) });
+  res.json({ content: reassembleSecret(JSON.parse(secret.fragments)) });
 });
 
 app.listen(PORT, () => {
