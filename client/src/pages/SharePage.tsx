@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import reactLogo from "../assets/react.svg";
 
-function SecondPage() {
+function SharePage() {
   return (
     <div className="h-screen bg-black flex justify-center items-center flex-col space-x-4 text-white">
       <div>
@@ -17,4 +17,4 @@ function SecondPage() {
   );
 }
 
-export default SecondPage;
+export default SharePage;
