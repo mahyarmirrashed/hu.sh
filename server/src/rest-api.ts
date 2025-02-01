@@ -162,6 +162,10 @@ app.post("/api/share/:shortId", async (req, res) => {
   res.json({ content: reassembleSecret(JSON.parse(secret.fragments)) });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server has started on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server has started on port ${PORT}`);
+  });
+}
+
+export default app;
