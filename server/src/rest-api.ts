@@ -4,7 +4,11 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import sss from "shamirs-secret-sharing";
 import { z } from "zod";
-import { randomFillSync } from "crypto";
+import {
+  calculateExpirationDatetime,
+  generateShortId,
+  reassembleSecret,
+} from "./helpers";
 import { StatusCodes } from "http-status-codes";
 
 // Configure environment variables
@@ -19,72 +23,10 @@ import { db } from "./db/knex";
 app.use(cors());
 app.use(express.json());
 
-/// HELPERS
-
-type Expiration = {
-  amount: number;
-  value: "m" | "h" | "d";
-};
-
 // TODO: export these into an environment variable file
 const HASH_SALT = 10; // for bcrypt salting rounds
 const SHARE_COUNT = 5;
 const SHARE_THRESHOLD = 5;
-const SHORT_ID_LENGTH = 8;
-
-/**
- * Converts an expiration object into an ISO UTC timestamp.
- * @param expiration An object with amount and value ("m" for minutes, "h" for hours, "d" for days)
- * @returns A string representing the expiration time in ISO format (Zulu/UTC)
- */
-function calculateExpirationDatetime(expiration: Expiration): string {
-  const now = new Date();
-
-  let offset = 0;
-
-  switch (expiration.value) {
-    case "m":
-      offset = Math.min(expiration.amount, 60) * 60 * 1000;
-      break;
-    case "h":
-      offset = Math.min(expiration.amount, 24) * 60 * 60 * 1000;
-      break;
-    case "d":
-      offset = Math.min(expiration.amount, 7) * 24 * 60 * 60 * 1000;
-      break;
-  }
-
-  // NOTE: ISO string makes it so that we are consistent in all regions of the world
-  return new Date(now.getTime() + offset).toISOString();
-}
-
-/**
- * Reassembles the secret from its fragments.
- * @param fragments An array of hex-encoded shares.
- * @returns The reassembled secret as a string.
- */
-function reassembleSecret(fragments: string[]): string {
-  const sharesBuffers = fragments.map((hex) => Buffer.from(hex, "hex"));
-  const recoveredBuffer = sss.combine(sharesBuffers);
-  return recoveredBuffer.toString("utf-8");
-}
-
-/**
- * Generates an n-character alphanumeric shortId.
- * @param length The length of the id.
- * @returns A securely generated shortId.
- */
-function generateShortId(length = SHORT_ID_LENGTH): string {
-  const chars =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const charsLength = chars.length;
-  const array = new Uint8Array(length);
-  randomFillSync(array);
-  // NOTE: this is slightly nonuniform
-  return Array.from(array, (byte) => chars[byte % charsLength]).join("");
-}
-
-/// API ENDPOINTS
 
 const secretCreationSchema = z.object({
   content: z.string().min(1, "Content must be a non-empty string"),
@@ -94,7 +36,6 @@ const secretCreationSchema = z.object({
   }),
   password: z.string().optional(),
 });
-
 const secretRetrievalSchema = z.object({
   password: z.string().min(1, "Password must be a non-empty string"),
 });
@@ -140,7 +81,7 @@ app.post("/api/create", async (req, res) => {
   });
 
   res.json({
-    shortlink: `http://localhost:${PORT}/share/${shortId}`,
+    shortlink: `http://localhost:${process.env.FRONTEND_PORT || 3000}/share/${shortId}`,
   });
 });
 
