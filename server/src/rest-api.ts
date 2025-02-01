@@ -135,7 +135,7 @@ app.post("/api/create", async (req, res) => {
   await db("secrets").insert({
     shortId,
     expiresAt,
-    fragments: sharesHex,
+    fragments: JSON.stringify(sharesHex),
     hash,
   });
 
