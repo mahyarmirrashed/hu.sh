@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { Copy, Eye, EyeOff } from "lucide-react";
+import { BASE_API_URL } from "./config";
 
 interface CreateSecretPayload {
   content: string;
@@ -37,7 +38,7 @@ const HomePage = () => {
       if (password.trim() !== "") {
         payload.password = password;
       }
-      const response = await fetch("${BASE_API_URL}/api/create", {
+      const response = await fetch(`${BASE_API_URL}/api/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -122,7 +123,7 @@ const HomePage = () => {
           {loading ? "Creating..." : "Create Secret"}
         </button>
         {shortlink && (
-          <div className="flex items-center space-x-2 mt-4 bg-gray-700 p-3 rounded">
+          <div className="flex items-center space-x-2 mt-4 bg-gray-700 p-3 rounded justify-between">
             <span className="break-all">{shortlink}</span>
             <button
               type="button"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
 import { Copy, Eye, EyeOff } from "lucide-react";
+import { BASE_API_URL } from "./config";
 
 const SharePage = () => {
   const { shortId } = useParams<{ shortId: string }>();
@@ -18,7 +19,7 @@ const SharePage = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`/api/share/${shortId}`);
+        const res = await fetch(`${BASE_API_URL}/api/share/${shortId}`);
         if (res.ok) {
           const data = await res.json();
           setSecret(data.content);
@@ -45,7 +46,7 @@ const SharePage = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/share/${shortId}`, {
+      const res = await fetch(`${BASE_API_URL}/api/share/${shortId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
