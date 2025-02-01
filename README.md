@@ -24,6 +24,7 @@ This is a full-stack application boilerplate by Infisical careers team with the 
 - **Docker Compose:** Used to orchestrate all services in the development environment.
 
 ### Code base walk though
+
 [![Image Alt Text](./video-talk-though.png)](https://infisical.wistia.com/medias/sb00s1tmpf)
 
 ---
@@ -46,11 +47,13 @@ Before starting, make sure you have the following tools installed on your system
 ## Setup Instructions
 
 1. **Download the repository:**
+
    - Go to the repository's page on GitHub.
    - Click the green "Code" button and select "Download ZIP."
    - Extract the ZIP file to your desired location.
 
 2. **Navigate to the project directory:**
+
    ```bash
    cd <extracted-folder>
    ```
@@ -58,6 +61,7 @@ Before starting, make sure you have the following tools installed on your system
 3. **Install dependencies:**
 
    Run the following commands to install dependencies for the frontend and backend:
+
    ```bash
    cd client && npm install
    cd ../server && npm install
@@ -66,6 +70,7 @@ Before starting, make sure you have the following tools installed on your system
 4. **Start the development environment:**
 
    Run the following command from the root of the project directory:
+
    ```bash
    docker compose -f docker-compose.dev.yml up --build
    ```
@@ -73,6 +78,7 @@ Before starting, make sure you have the following tools installed on your system
 5. **To stop the environment:**
 
    Run the following command:
+
    ```bash
    docker compose -f docker-compose.dev.yml down
    ```
@@ -84,23 +90,26 @@ Before starting, make sure you have the following tools installed on your system
 The backend uses **Knex.js** for managing database migrations. Database migrations help manage creating, updating and deleting table schemas. Below are the commands for creating, applying, and rolling back migrations.
 
 > [!NOTE]  
-> The Docker Compose file includes a `db-migration` service that automatically runs pending migrations when the application starts. 
+> The Docker Compose file includes a `db-migration` service that automatically runs pending migrations when the application starts.
 
 ### Migration Commands
 
 From the `server` directory, use the following commands:
 
 - **Create a new database tables:**
+
   ```bash
   npm run migration:new
   ```
 
 - **Run all pending migrations:**
+
   ```bash
   npm run migration:latest
   ```
 
 - **Rollback the last batch of migrations:**
+
   ```bash
   npm run migration:rollback
   ```
@@ -113,7 +122,7 @@ From the `server` directory, use the following commands:
   ```bash
   npm run migration:unlock
   ```
-  
+
 ## Services Overview
 
 ### Backend
@@ -123,7 +132,7 @@ From the `server` directory, use the following commands:
 - **Port Mapping:**  
   Externally accessible on `http://localhost:8000`
 - **Database Integration:**  
-  The backend connects to the PostgreSQL database using **Knex.js** for query operations. 
+  The backend connects to the PostgreSQL database using **Knex.js** for query operations.
 - **Environment Variables:**
   - `NODE_ENV=development`
   - `DB_CONNECTION_URI=postgres://infisical:infisical@localhost/infisical?sslmode=disable`
@@ -159,7 +168,8 @@ From the `server` directory, use the following commands:
 ### Other helpful Services
 
 #### pgAdmin
-- **Description:** A web-based management tool for PostgreSQL. This will help you quickly view your DB tables. 
+
+- **Description:** A web-based management tool for PostgreSQL. This will help you quickly view your DB tables.
 - **Port Mapping:**  
   Accessible on `http://localhost:5050`
 - **Default Credentials:**
@@ -167,8 +177,9 @@ From the `server` directory, use the following commands:
   - **Password:** `pass`
 
 #### SMTP Server
+
 - **Description:** If you are adding any SMTP functionality and need to test sending/receiving emails, use this service.
-- **Port Mapping:**  
+- **Port Mapping:**
   - SMTP: `localhost:1025`
   - Web UI: `http://localhost:8025`
 
@@ -176,30 +187,33 @@ From the `server` directory, use the following commands:
 
 ## Local Access Links
 
-| Service         | URL                        |
-|------------------|----------------------------|
-| Frontend        | [http://localhost:3000](http://localhost:3000) |
-| Backend         | [http://localhost:8000](http://localhost:8000) |
-| PostgreSQL      | `localhost:5432` (via psql or client tools) |
-| pgAdmin         | [http://localhost:5050](http://localhost:5050) |
-| SMTP Web UI     | [http://localhost:8025](http://localhost:8025) |
+| Service     | URL                                            |
+| ----------- | ---------------------------------------------- |
+| Frontend    | [http://localhost:3000](http://localhost:3000) |
+| Backend     | [http://localhost:8000](http://localhost:8000) |
+| PostgreSQL  | `localhost:5432` (via psql or client tools)    |
+| pgAdmin     | [http://localhost:5050](http://localhost:5050) |
+| SMTP Web UI | [http://localhost:8025](http://localhost:8025) |
 
 ---
 
 ## Development Commands
 
 ### Install Dependencies
+
 ```bash
 cd client && npm install
 cd ../server && npm install
 ```
 
 ### Build and Start Services
+
 ```bash
 docker compose -f docker-compose.dev.yml up --build
 ```
 
 ### Stop and Remove Services
+
 ```bash
 docker compose -f docker-compose.dev.yml down
 ```
@@ -210,4 +224,3 @@ Default Ports
 2. Backend (Express): 8000
 3. PostgreSQL: 5432
 4. SMTP dev server: 1025
-
