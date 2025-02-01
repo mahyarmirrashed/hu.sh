@@ -16,12 +16,15 @@
 
 ## Overview
 
-This is a full-stack application boilerplate by Infisical careers team with the following components:
+This is a full-stack application boilerplate by Infisical careers team with the
+following components:
 
 - **Backend:** An API built with **Express.js**.
 - **Frontend:** A user interface built with **React.js**.
-- **Database:** A **PostgreSQL** database with query operations powered by **Knex.js**.
-- **Docker Compose:** Used to orchestrate all services in the development environment.
+- **Database:** A **PostgreSQL** database with query operations powered by
+  **Knex.js**.
+- **Docker Compose:** Used to orchestrate all services in the development
+  environment.
 
 ### Code base walk though
 
@@ -31,7 +34,8 @@ This is a full-stack application boilerplate by Infisical careers team with the 
 
 ## Prerequisites
 
-Before starting, make sure you have the following tools installed on your system:
+Before starting, make sure you have the following tools installed on your
+system:
 
 1. **Docker** (v20.10 or higher)  
    [Install Docker](https://docs.docker.com/get-docker/)
@@ -40,7 +44,8 @@ Before starting, make sure you have the following tools installed on your system
    Docker Desktop typically includes Docker Compose.
 
 3. **Node.js** (v20 or higher)  
-   Required for installing dependencies locally. [Download Node.js](https://nodejs.org/)
+   Required for installing dependencies locally.
+   [Download Node.js](https://nodejs.org/)
 
 ---
 
@@ -60,7 +65,8 @@ Before starting, make sure you have the following tools installed on your system
 
 3. **Install dependencies:**
 
-   Run the following commands to install dependencies for the frontend and backend:
+   Run the following commands to install dependencies for the frontend and
+   backend:
 
    ```bash
    cd client && npm install
@@ -87,10 +93,13 @@ Before starting, make sure you have the following tools installed on your system
 
 ## Database Migrations
 
-The backend uses **Knex.js** for managing database migrations. Database migrations help manage creating, updating and deleting table schemas. Below are the commands for creating, applying, and rolling back migrations.
+The backend uses **Knex.js** for managing database migrations. Database
+migrations help manage creating, updating and deleting table schemas. Below are
+the commands for creating, applying, and rolling back migrations.
 
 > [!NOTE]  
-> The Docker Compose file includes a `db-migration` service that automatically runs pending migrations when the application starts.
+> The Docker Compose file includes a `db-migration` service that automatically
+> runs pending migrations when the application starts.
 
 ### Migration Commands
 
@@ -132,7 +141,8 @@ From the `server` directory, use the following commands:
 - **Port Mapping:**  
   Externally accessible on `http://localhost:8000`
 - **Database Integration:**  
-  The backend connects to the PostgreSQL database using **Knex.js** for query operations.
+  The backend connects to the PostgreSQL database using **Knex.js** for query
+  operations.
 - **Environment Variables:**
   - `NODE_ENV=development`
   - `DB_CONNECTION_URI=postgres://infisical:infisical@localhost/infisical?sslmode=disable`
@@ -150,7 +160,8 @@ From the `server` directory, use the following commands:
 
 ### Database
 
-- **Description:** The database is **PostgreSQL**, used to store and manage persistent data.
+- **Description:** The database is **PostgreSQL**, used to store and manage
+  persistent data.
 - **Image:** `postgres:16-alpine`
 - **Port Mapping:**  
   Externally accessible on `localhost:5432`
@@ -169,7 +180,8 @@ From the `server` directory, use the following commands:
 
 #### pgAdmin
 
-- **Description:** A web-based management tool for PostgreSQL. This will help you quickly view your DB tables.
+- **Description:** A web-based management tool for PostgreSQL. This will help
+  you quickly view your DB tables.
 - **Port Mapping:**  
   Accessible on `http://localhost:5050`
 - **Default Credentials:**
@@ -178,7 +190,8 @@ From the `server` directory, use the following commands:
 
 #### SMTP Server
 
-- **Description:** If you are adding any SMTP functionality and need to test sending/receiving emails, use this service.
+- **Description:** If you are adding any SMTP functionality and need to test
+  sending/receiving emails, use this service.
 - **Port Mapping:**
   - SMTP: `localhost:1025`
   - Web UI: `http://localhost:8025`
