@@ -80,8 +80,6 @@
 | PostgreSQL | `localhost:5432` (via psql or client tools)    |
 | pgAdmin    | [http://localhost:5050](http://localhost:5050) |
 
----
-
 ## Development Commands
 
 Many of the common development commands are documented in the
@@ -104,9 +102,3 @@ just up
 ```bash
 just down
 ```
-
-Default Ports
-
-1. Frontend (React): 3000
-2. Backend (Express): 8000
-3. PostgreSQL: 5432
