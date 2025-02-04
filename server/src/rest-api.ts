@@ -80,9 +80,7 @@ app.post("/api/create", async (req, res) => {
     hash,
   });
 
-  res.json({
-    shortlink: `http://localhost:${process.env.FRONTEND_PORT || 3000}/share/${shortId}`,
-  });
+  res.json({ id: shortId });
 });
 
 /**
