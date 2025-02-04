@@ -1,17 +1,5 @@
 # Smol: Secret Sharing Service
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-- [Services Overview](#services-overview)
-  - [Backend](#backend)
-  - [Frontend](#frontend)
-  - [Database](#database)
-- [Local Access Links](#local-access-links)
-- [Development Commands](#development-commands)
-
 ## Overview
 
 - **Backend:** An API built with **Express.js**.
