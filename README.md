@@ -21,56 +21,6 @@
 - **Docker Compose:** Used to orchestrate all services in the development
   environment.
 
-## Services Overview
-
-### Backend
-
-- **Description:** The backend is built with **Express.js**
-- **Code Directory:** `./server`
-- **Port Mapping:**  
-  Externally accessible on `http://localhost:8000`
-- **Database Integration:**  
-  The backend connects to the PostgreSQL database using **Knex.js** for query
-  operations.
-- **Environment Variables:**
-  - `NODE_ENV=development`
-  - `DB_CONNECTION_URI=postgres://infisical:infisical@localhost/infisical?sslmode=disable`
-
-### Frontend
-
-- **Description:** The frontend is a **React.js** application.
-- **Code Directory:** `./client`
-- **Port Mapping:**  
-  Externally accessible on `http://localhost:3000`
-
-### Database
-
-- **Description:** The database is **PostgreSQL**, used to store and manage
-  persistent data.
-- **Image:** `postgres:16-alpine`
-- **Port Mapping:**  
-  Externally accessible on `localhost:5432`
-- **Query Builder:**  
-  **Knex.js** is used to manage migrations and queries in the backend.
-- **Credentials:**
-  - **Username:** `infisical`
-  - **Password:** `infisical`
-  - **Database Name:** `infisical`
-- **Volume:**  
-  Data is persisted in the `postgres-data` volume.
-
-### Other helpful Services
-
-#### pgAdmin
-
-- **Description:** A web-based management tool for PostgreSQL. This will help
-  you quickly view your DB tables.
-- **Port Mapping:**  
-  Accessible on `http://localhost:5050`
-- **Default Credentials:**
-  - **Email:** `admin@example.com`
-  - **Password:** `pass`
-
 ## Local Access Links
 
 | Service    | URL                                            |
