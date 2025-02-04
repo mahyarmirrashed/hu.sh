@@ -188,47 +188,40 @@ From the `server` directory, use the following commands:
   - **Email:** `admin@example.com`
   - **Password:** `pass`
 
-#### SMTP Server
-
-- **Description:** If you are adding any SMTP functionality and need to test
-  sending/receiving emails, use this service.
-- **Port Mapping:**
-  - SMTP: `localhost:1025`
-  - Web UI: `http://localhost:8025`
-
 ---
 
 ## Local Access Links
 
-| Service     | URL                                            |
-| ----------- | ---------------------------------------------- |
-| Frontend    | [http://localhost:3000](http://localhost:3000) |
-| Backend     | [http://localhost:8000](http://localhost:8000) |
-| PostgreSQL  | `localhost:5432` (via psql or client tools)    |
-| pgAdmin     | [http://localhost:5050](http://localhost:5050) |
-| SMTP Web UI | [http://localhost:8025](http://localhost:8025) |
+| Service    | URL                                            |
+| ---------- | ---------------------------------------------- |
+| Frontend   | [http://localhost:3000](http://localhost:3000) |
+| Backend    | [http://localhost:8000](http://localhost:8000) |
+| PostgreSQL | `localhost:5432` (via psql or client tools)    |
+| pgAdmin    | [http://localhost:5050](http://localhost:5050) |
 
 ---
 
 ## Development Commands
 
+Many of the common development commands are documented in the
+[Justfile](./Justfile).
+
 ### Install Dependencies
 
 ```bash
-cd client && npm install
-cd ../server && npm install
+just install
 ```
 
 ### Build and Start Services
 
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+just up
 ```
 
 ### Stop and Remove Services
 
 ```bash
-docker compose -f docker-compose.dev.yml down
+just down
 ```
 
 Default Ports
@@ -236,4 +229,3 @@ Default Ports
 1. Frontend (React): 3000
 2. Backend (Express): 8000
 3. PostgreSQL: 5432
-4. SMTP dev server: 1025
