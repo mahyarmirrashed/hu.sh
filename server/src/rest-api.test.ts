@@ -31,10 +31,8 @@ describe("Secret Sharing API", () => {
 
       const res = await request(app).post("/api/create").send(payload);
       expect(res.status).toBe(StatusCodes.OK);
-
-      expect(res.body.shortlink).toMatch(/\/share\/[A-Za-z0-9]{8}$/);
-      expect(res.body.shortlink).toContain("abcd1234");
-
+      expect(res.body.id).toMatch(/^[A-Za-z0-9]{8}$/);
+      expect(res.body.id).toContain("abcd1234");
       expect(insertMock).toHaveBeenCalled();
       const insertArg = insertMock.mock.calls[0][0];
       expect(insertArg).toHaveProperty("shortId", "abcd1234");
@@ -64,14 +62,12 @@ describe("Secret Sharing API", () => {
 
       const res = await request(app).post("/api/create").send(payload);
       expect(res.status).toBe(StatusCodes.OK);
-      expect(res.body.shortlink).toMatch(/\/share\/[A-Za-z0-9]{8}$/);
-      expect(res.body.shortlink).toContain("xyz98765");
-
+      expect(res.body.id).toMatch(/^[A-Za-z0-9]{8}$/);
+      expect(res.body.id).toContain("xyz98765");
       expect(bcrypt.hash).toHaveBeenCalledWith(
         payload.password,
         expect.anything(),
       );
-
       expect(insertMock).toHaveBeenCalled();
       const insertArg = insertMock.mock.calls[0][0];
       expect(insertArg).toHaveProperty("hash", fakeHashedPassword);
