@@ -1,4 +1,4 @@
-# Infisical take home coding assignment
+# Smol: Secret Sharing Service
 
 ## Table of Contents
 
