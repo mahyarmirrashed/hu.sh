@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import sss from "shamirs-secret-sharing";
 import { z } from "zod";
 import cron from "node-cron";
+import consola from "consola"; // Import Consola
 import {
   calculateExpirationDatetime,
   generateShortId,
@@ -50,9 +51,12 @@ const secretRetrievalSchema = z.object({
  * }
  */
 app.post("/api/create", async (req, res) => {
+  consola.info("Received request to create a new secret.");
+
   const parsed = secretCreationSchema.safeParse(req.body);
   if (!parsed.success) {
     const error = parsed.error.errors.map((e) => e.message).join(", ");
+    consola.warn(`Validation failed: ${error}`);
     res.status(StatusCodes.BAD_REQUEST).json({ message: error });
     return;
   }
@@ -81,6 +85,7 @@ app.post("/api/create", async (req, res) => {
     hash,
   });
 
+  consola.success(`Secret stored successfully. ID: ${shortId}`);
   res.json({ shortlink: shortId });
 });
 
@@ -90,9 +95,11 @@ app.post("/api/create", async (req, res) => {
  */
 app.get("/api/share/:shortId", async (req, res) => {
   const { shortId } = req.params;
+  consola.info(`Received request to retrieve secret: ${shortId}`);
 
   const secret = await db("secrets").where({ shortId }).first();
   if (!secret) {
+    consola.warn(`Secret not found: ${shortId}`);
     res.status(StatusCodes.NOT_FOUND).json({ message: "Secret not found" });
     return;
   }
@@ -101,15 +108,18 @@ app.get("/api/share/:shortId", async (req, res) => {
   const now = new Date();
   if (now > new Date(secret.expiresAt)) {
     await db("secrets").where({ shortId }).del();
+    consola.info(`Expired secret deleted: ${shortId}`);
     res.status(StatusCodes.NOT_FOUND).json({ message: "Secret has expired" });
     return;
   }
 
   if (secret.hash) {
+    consola.warn(`Unauthorized access attempt for secret: ${shortId}`);
     res.status(StatusCodes.UNAUTHORIZED).json({ message: "Password required" });
     return;
   }
 
+  consola.success(`Secret retrieved successfully: ${shortId}`);
   res.json({ content: reassembleSecret(secret.fragments) });
 });
 
@@ -123,9 +133,12 @@ app.get("/api/share/:shortId", async (req, res) => {
  */
 app.post("/api/share/:shortId", async (req, res) => {
   const { shortId } = req.params;
+  consola.info(`Received request to retrieve protected secret: ${shortId}`);
+
   const parsed = secretRetrievalSchema.safeParse(req.body);
   if (!parsed.success) {
     const error = parsed.error.errors.map((e) => e.message).join(", ");
+    consola.warn(`Validation failed: ${error}`);
     res.status(StatusCodes.BAD_REQUEST).json({ message: error });
     return;
   }
@@ -133,6 +146,7 @@ app.post("/api/share/:shortId", async (req, res) => {
 
   const secret = await db("secrets").where({ shortId }).first();
   if (!secret) {
+    consola.warn(`Secret not found: ${shortId}`);
     res.status(StatusCodes.NOT_FOUND).json({ message: "Secret not found" });
     return;
   }
@@ -141,11 +155,15 @@ app.post("/api/share/:shortId", async (req, res) => {
   const now = new Date();
   if (now > new Date(secret.expiresAt)) {
     await db("secrets").where({ shortId }).del();
+    consola.info(`Expired secret deleted: ${shortId}`);
     res.status(StatusCodes.NOT_FOUND).json({ message: "Secret has expired" });
     return;
   }
 
   if (!secret.hash) {
+    consola.warn(
+      `Attempted password auth for a non-password-protected secret: ${shortId}`,
+    );
     res
       .status(StatusCodes.BAD_REQUEST)
       .json({ message: "Secret is not password protected" });
@@ -154,16 +172,21 @@ app.post("/api/share/:shortId", async (req, res) => {
 
   const valid = await bcrypt.compare(password, secret.hash);
   if (!valid) {
+    consola.warn(`Incorrect password attempt for secret: ${shortId}`);
     res.status(StatusCodes.FORBIDDEN).json({ message: "Incorrect password" });
     return;
   }
 
+  consola.success(`Protected secret retrieved successfully: ${shortId}`);
   res.json({ content: reassembleSecret(secret.fragments) });
 });
 
+/**
+ * Cleanup expired secrets every minute.
+ */
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
-    console.log(`Server has started on port ${PORT}`);
+    consola.ready(`Server has started on port ${PORT}`);
   });
 
   cron.schedule("* * * * *", async () => {
@@ -172,10 +195,10 @@ if (process.env.NODE_ENV !== "test") {
         .where("expiresAt", "<", new Date())
         .del();
       if (deletedCount > 0) {
-        console.log(`Cleaned up ${deletedCount} expired secret(s).`);
+        consola.info(`Cleaned up ${deletedCount} expired secret(s).`);
       }
     } catch (error) {
-      console.error("Error cleaning up expired secrets:", error);
+      consola.error("Error cleaning up expired secrets:", error);
     }
   });
 }
