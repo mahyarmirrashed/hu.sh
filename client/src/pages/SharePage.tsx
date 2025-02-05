@@ -85,52 +85,8 @@ const SharePage = () => {
 
   return (
     <div className="min-h-screen bg-[#252a33] flex flex-col justify-center items-center text-white p-4 relative">
-      {/* Authenticated view */}
-      {secret && (
-        <div className="w-full max-w-md space-y-4">
-          <h2 className="text-2xl font-bold text-center text-[#81a1c1]">
-            Your Secret
-          </h2>
-
-          {/* Secret showing area */}
-          <div className="relative">
-            <Input
-              type={showSecret ? "text" : "password"}
-              value={secret}
-              placeholder="Amount"
-              readOnly
-              className="bg-gray-700"
-            />
-            <div
-              className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
-              onClick={() => setShowSecret((prev) => !prev)}
-            >
-              {showSecret ? <EyeOff size={20} /> : <Eye size={20} />}
-            </div>
-          </div>
-
-          <TooltipProvider>
-            <Tooltip open={copyTooltipOpen}>
-              <TooltipTrigger asChild>
-                <Button
-                  disabled={loading}
-                  onClick={copyToClipboard}
-                  className="w-full bg-[#81a1c1] hover:bg-[#5e81ac] py-3 rounded font-bold"
-                >
-                  <Copy size={20} />
-                  <span>Copy Secret</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Copied!</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      )}
-
-      {/* Unauthenticated view */}
-      {requiresPassword && (
+      {requiresPassword ? (
+        /* Unauthenticated view */
         <form
           onSubmit={handlePasswordSubmit}
           className="w-full max-w-md space-y-4"
@@ -178,6 +134,48 @@ const SharePage = () => {
             {loading ? "Verifying..." : "Submit"}
           </Button>
         </form>
+      ) : (
+        /* Authenticated view */
+        <div className="w-full max-w-md space-y-4">
+          <h2 className="text-2xl font-bold text-center text-[#81a1c1]">
+            Your Secret
+          </h2>
+
+          {/* Secret showing area */}
+          <div className="relative">
+            <Input
+              type={showSecret ? "text" : "password"}
+              value={secret}
+              placeholder="Amount"
+              readOnly
+              className="bg-gray-700"
+            />
+            <div
+              className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+              onClick={() => setShowSecret((prev) => !prev)}
+            >
+              {showSecret ? <EyeOff size={20} /> : <Eye size={20} />}
+            </div>
+          </div>
+
+          <TooltipProvider>
+            <Tooltip open={copyTooltipOpen}>
+              <TooltipTrigger asChild>
+                <Button
+                  disabled={loading}
+                  onClick={copyToClipboard}
+                  className="w-full bg-[#81a1c1] hover:bg-[#5e81ac] py-3 rounded font-bold"
+                >
+                  <Copy size={20} />
+                  <span>Copy Secret</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copied!</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       )}
 
       {/* Bottom-left logo */}
