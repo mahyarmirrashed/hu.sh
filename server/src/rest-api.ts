@@ -80,7 +80,7 @@ app.post("/api/create", async (req, res) => {
     hash,
   });
 
-  res.json({ id: shortId });
+  res.json({ shortlink: shortId });
 });
 
 /**
