@@ -1,5 +1,7 @@
 # hu.sh: Secret Sharing Service
 
+![](./client/res/screenshot.png)
+
 ## Overview
 
 - **Backend:** An API built with **Express.js**.
