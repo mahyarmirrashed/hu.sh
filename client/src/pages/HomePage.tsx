@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
 import { Copy, Eye, EyeOff } from "lucide-react";
 import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "./config";
+import Logo from "../components/Logo";
 
 interface CreateSecretPayload {
   content: string;
@@ -138,12 +138,7 @@ const HomePage = () => {
         )}
       </form>
       {/* Bottom-left logo */}
-      <Link
-        to="/"
-        className="absolute bottom-6 left-6 text-white text-3xl font-bold"
-      >
-        smol.lnk
-      </Link>
+      <Logo />
     </div>
   );
 };
