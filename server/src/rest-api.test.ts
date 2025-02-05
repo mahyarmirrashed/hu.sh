@@ -199,7 +199,7 @@ describe("Secret Sharing API", () => {
       expect(res.body.message).toBe("Secret not found");
     });
 
-    it("should return 410 if secret has expired", async () => {
+    it("should return 404 if secret has expired", async () => {
       const expiredSecret = {
         shortId: "expired1",
         expiresAt: new Date(Date.now() - 10000).toISOString(),
@@ -222,7 +222,7 @@ describe("Secret Sharing API", () => {
 
       const payload = { password: "anyPassword" };
       const res = await request(app).post("/api/share/expired1").send(payload);
-      expect(res.status).toBe(StatusCodes.GONE);
+      expect(res.status).toBe(StatusCodes.NOT_FOUND);
       expect(res.body.message).toBe("Secret has expired");
       expect(delMock).toHaveBeenCalled();
     });
