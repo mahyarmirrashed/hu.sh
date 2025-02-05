@@ -39,6 +39,7 @@ const HomePage = () => {
   const [shortlink, setShortlink] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [copyTooltipOpen, setCopyTooltipOpen] = useState(false);
 
@@ -163,7 +164,7 @@ const HomePage = () => {
         {/* Confirm Password field */}
         <div className="relative">
           <Input
-            type={showPassword ? "text" : "password"}
+            type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm password"
@@ -171,9 +172,9 @@ const HomePage = () => {
           />
           <div
             className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
-            onClick={() => setShowPassword((prev) => !prev)}
+            onClick={() => setShowConfirmPassword((prev) => !prev)}
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </div>
         </div>
 
