@@ -97,9 +97,8 @@ app.get("/api/share/:shortId", async (req, res) => {
   }
 
   // Check if the secret has expired (all times are in ISO UTC format)
-  const now = new Date().toISOString();
-
-  if (now > secret.expiresAt) {
+  const now = new Date();
+  if (now > new Date(secret.expiresAt)) {
     await db("secrets").where({ shortId }).del();
     res.status(StatusCodes.NOT_FOUND).json({ message: "Secret has expired" });
     return;
@@ -137,8 +136,9 @@ app.post("/api/share/:shortId", async (req, res) => {
     return;
   }
 
-  const now = new Date().toISOString();
-  if (now > secret.expiresAt) {
+  // Check if the secret has expired (all times are in ISO UTC format)
+  const now = new Date();
+  if (now > new Date(secret.expiresAt)) {
     await db("secrets").where({ shortId }).del();
     res.status(StatusCodes.NOT_FOUND).json({ message: "Secret has expired" });
     return;
