@@ -168,7 +168,7 @@ const HomePage = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm password"
-            className="w-full bg-gray-700 text-white"
+            className="w-full bg-gray-700"
           />
           <div
             className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
@@ -198,7 +198,7 @@ const HomePage = () => {
 
         {/* Display shortlink and copy functionality */}
         {shortlink && (
-          <Card className="flex items-center space-x-2 text-white pl-3 bg-gray-700 rounded justify-between">
+          <Card className="flex items-center space-x-2 pl-3 bg-gray-700 rounded justify-between">
             <span className="break-all">
               {FRONTEND_BASE_URL}/share/{shortlink}
             </span>
