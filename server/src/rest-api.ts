@@ -68,8 +68,10 @@ app.post("/api/create", async (req, res) => {
 
   const hash = password ? await bcrypt.hash(password, HASH_SALT) : null;
 
-  // TODO: fix this so that we generate so that there are no collisions
-  const shortId = generateShortId();
+  let shortId: string;
+  do {
+    shortId = generateShortId();
+  } while (await db("secrets").where({ shortId }).first());
 
   await db("secrets").insert({
     shortId,
