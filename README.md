@@ -1,4 +1,4 @@
-# Smol: Secret Sharing Service
+# hu.sh: Secret Sharing Service
 
 ## Overview
 
