@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router";
+import { useParams } from "react-router";
 import { Copy, Eye, EyeOff } from "lucide-react";
 import { BACKEND_BASE_URL } from "./config";
+import Logo from "../components/Logo";
 
 const SharePage = () => {
   const { shortId } = useParams<{ shortId: string }>();
@@ -142,12 +143,7 @@ const SharePage = () => {
         </form>
       )}
       {/* Bottom-left logo */}
-      <Link
-        to="/"
-        className="absolute bottom-6 left-6 text-white text-3xl font-bold"
-      >
-        smol.lnk
-      </Link>
+      <Logo />
     </div>
   );
 };
