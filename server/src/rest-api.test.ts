@@ -108,7 +108,6 @@ describe("Secret Sharing API", () => {
     });
 
     it("should return 404 and delete the secret if it has expired", async () => {
-      // Create an expired secret (expiresAt in the past).
       const expiredSecret = {
         shortId: "expired1",
         expiresAt: new Date(Date.now() - 10000).toISOString(),
@@ -116,27 +115,22 @@ describe("Secret Sharing API", () => {
         fragments: JSON.stringify(["frag1", "frag2"]),
       };
 
-      // First, the retrieval call: db("secrets").where({ shortId }).first() returns the expired secret
-      const whereFirstMock = vi.fn().mockReturnValue({
-        first: vi.fn().mockResolvedValue(expiredSecret),
-      });
-      // Next, the deletion call: db("secrets").where({ shortId }).del() is called
-      const delMock = vi.fn().mockResolvedValue(1);
-      const whereDelMock = vi.fn().mockReturnValue({
-        del: delMock,
-      });
+      const firstMock = vi.fn().mockResolvedValue(expiredSecret);
+      const delMock = vi.fn().mockResolvedValue(undefined);
 
-      // Set up sequential calls:
-      // - First call (for retrieval)
-      // - Second call (for deletion)
       (db as any)
-        .mockReturnValueOnce({ where: whereFirstMock })
-        .mockReturnValueOnce({ where: whereDelMock });
+        .mockReturnValueOnce({
+          where: vi.fn().mockReturnThis(),
+          first: firstMock,
+        })
+        .mockReturnValueOnce({
+          where: vi.fn().mockReturnThis(),
+          del: delMock,
+        });
 
       const res = await request(app).get("/api/share/expired1");
       expect(res.status).toBe(StatusCodes.NOT_FOUND);
       expect(res.body.message).toBe("Secret has expired");
-      // Verify that the deletion was triggered
       expect(delMock).toHaveBeenCalled();
     });
 
@@ -253,7 +247,7 @@ describe("Secret Sharing API", () => {
       const secret = {
         shortId: "wrongpass",
         expiresAt: new Date(Date.now() + 10000).toISOString(),
-        hash: "hashedPassword", // Dummy hash.
+        hash: "hashedPassword",
         fragments: JSON.stringify(["frag1", "frag2"]),
       };
 
@@ -272,11 +266,10 @@ describe("Secret Sharing API", () => {
     });
 
     it("should return secret content if valid secret and correct password", async () => {
-      // A valid secret that is password protected.
       const secret = {
         shortId: "valid",
         expiresAt: new Date(Date.now() + 10000).toISOString(),
-        hash: "hashedPassword", // Dummy hash value.
+        hash: "hashedPassword",
         fragments: JSON.stringify(["frag1", "frag2"]),
       };
 
