@@ -110,7 +110,7 @@ app.get("/api/share/:shortId", async (req, res) => {
     return;
   }
 
-  res.json({ content: reassembleSecret(JSON.parse(secret.fragments)) });
+  res.json({ content: reassembleSecret(secret.fragments) });
 });
 
 /**
@@ -157,7 +157,7 @@ app.post("/api/share/:shortId", async (req, res) => {
     return;
   }
 
-  res.json({ content: reassembleSecret(JSON.parse(secret.fragments)) });
+  res.json({ content: reassembleSecret(secret.fragments) });
 });
 
 if (process.env.NODE_ENV !== "test") {
