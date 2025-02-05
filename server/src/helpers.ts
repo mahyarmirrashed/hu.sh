@@ -6,8 +6,7 @@ type Expiration = {
   value: "m" | "h" | "d";
 };
 
-// TODO: export these into an environment variable file
-const SHORT_ID_LENGTH = 8;
+const SHORT_ID_LENGTH = parseInt(process.env.SHORT_ID_LENGTH || "8", 10);
 
 /**
  * Converts an expiration object into an ISO UTC timestamp.

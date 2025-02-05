@@ -15,6 +15,9 @@ import { StatusCodes } from "http-status-codes";
 dotenv.config();
 
 const PORT = process.env.PORT || 8000;
+const HASH_SALT = parseInt(process.env.HASH_SALT || "10", 10); // Bcrypt salting rounds
+const SHARE_COUNT = parseInt(process.env.SHARE_COUNT || "5", 10);
+const SHARE_THRESHOLD = parseInt(process.env.SHARE_THRESHOLD || "5", 10);
 
 const app = express();
 import { db } from "./db/knex";
@@ -22,11 +25,6 @@ import { db } from "./db/knex";
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// TODO: export these into an environment variable file
-const HASH_SALT = 10; // for bcrypt salting rounds
-const SHARE_COUNT = 5;
-const SHARE_THRESHOLD = 5;
 
 const secretCreationSchema = z.object({
   content: z.string().min(1, "Content must be a non-empty string"),
