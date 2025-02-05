@@ -43,10 +43,18 @@ export function generateShortId(length = SHORT_ID_LENGTH): string {
   const chars =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const charsLength = chars.length;
-  const array = new Uint8Array(length);
-  randomFillSync(array);
-  // NOTE: this is slightly nonuniform
-  return Array.from(array, (byte) => chars[byte % charsLength]).join("");
+  const maximumValidByte = 256 - (256 % charsLength);
+
+  let id = "";
+  while (id.length < length) {
+    const randomByte = new Uint8Array(1);
+    randomFillSync(randomByte);
+    const byte = randomByte[0];
+    if (byte < maximumValidByte) {
+      id += chars[byte % charsLength];
+    }
+  }
+  return id;
 }
 
 /**
