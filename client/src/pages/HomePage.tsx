@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Copy, Eye, EyeOff } from "lucide-react";
 import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "./config";
-import Logo from "../components/Logo";
+import Logo from "@/components/Logo";
 
 interface CreateSecretPayload {
   content: string;
