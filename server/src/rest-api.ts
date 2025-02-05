@@ -4,6 +4,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import sss from "shamirs-secret-sharing";
 import { z } from "zod";
+import cron from "node-cron";
 import {
   calculateExpirationDatetime,
   generateShortId,
@@ -163,6 +164,19 @@ app.post("/api/share/:shortId", async (req, res) => {
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
     console.log(`Server has started on port ${PORT}`);
+  });
+
+  cron.schedule("* * * * *", async () => {
+    try {
+      const deletedCount = await db("secrets")
+        .where("expiresAt", "<", new Date())
+        .del();
+      if (deletedCount > 0) {
+        console.log(`Cleaned up ${deletedCount} expired secret(s).`);
+      }
+    } catch (error) {
+      console.error("Error cleaning up expired secrets:", error);
+    }
   });
 }
 
