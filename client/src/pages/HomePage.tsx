@@ -17,15 +17,26 @@ const HomePage = () => {
   const [expirationAmount, setExpirationAmount] = useState("5");
   const [expirationUnit, setExpirationUnit] = useState<"m" | "h" | "d">("m"); // Options: "m", "d", "h"
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [shortlink, setShortlink] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  const passwordMismatchError =
+    (password || confirmPassword) && password !== confirmPassword
+      ? "Passwords do not match!"
+      : "";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setShortlink("");
+
+    if (passwordMismatchError) {
+      return;
+    }
+
     setLoading(true);
     try {
       const payload: CreateSecretPayload = {
@@ -35,9 +46,11 @@ const HomePage = () => {
           value: expirationUnit,
         },
       };
+
       if (password.trim() !== "") {
         payload.password = password;
       }
+
       const response = await fetch(`${BACKEND_BASE_URL}/api/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,7 +77,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-[#252a33] flex flex-col justify-center items-center text-white p-4 relative">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md space-y-4"
+        className="bg-gray-800 border-white border-[1px] p-6 rounded-lg shadow-md w-full max-w-md space-y-4"
       >
         <h2 className="text-2xl font-bold text-center">Create Secret</h2>
         <div>
@@ -99,6 +112,7 @@ const HomePage = () => {
             <option value="h">Hours</option>
           </select>
         </div>
+        {/* Password Field */}
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
@@ -114,6 +128,29 @@ const HomePage = () => {
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </div>
         </div>
+        {/* Confirm Password Field */}
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm password"
+            className="w-full p-3 rounded bg-gray-700 text-white"
+          />
+          <div
+            className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </div>
+        </div>
+        {/* Inline error for password mismatch */}
+        {passwordMismatchError && (
+          <p className="text-red-500 text-sm pl-2 font-bold">
+            {passwordMismatchError}
+          </p>
+        )}
+        {/* Global error for other issues */}
         {error && <div className="text-red-500 text-center">{error}</div>}
         <button
           type="submit"
