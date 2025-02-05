@@ -180,7 +180,7 @@ const HomePage = () => {
 
         {/* Inline error for password mismatch */}
         {passwordMismatchError && (
-          <p className="text-[#bf616a] text-sm pl-2 font-bold">
+          <p className="text-[#bf616a] text-center mt-2 font-bold">
             {passwordMismatchError}
           </p>
         )}
