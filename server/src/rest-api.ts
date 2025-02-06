@@ -39,6 +39,12 @@ const secretCreationSchema = z.object({
 const secretRetrievalSchema = z.object({
   password: z.string().min(1, "Password must be a non-empty string"),
 });
+const askCreationSchema = z.object({
+  period: z.number().min(1, "Expiration time in minutes."),
+});
+const respondRequestSchema = z.object({
+  content: z.string().min(1, "Content must be a non-empty string"),
+});
 
 /**
  * POST /api/create
@@ -179,6 +185,152 @@ app.post("/api/share/:shortId", async (req, res) => {
 
   consola.success(`Protected secret retrieved successfully: ${shortId}`);
   res.json({ content: reassembleSecret(secret.fragments) });
+});
+
+/**
+ * POST /api/ask
+ * Create a request to a receiver for a secret.
+ * Expected JSON body:
+ * {
+ *   period: number // minutes
+ * }
+ */
+app.post("/api/ask", async (req, res) => {
+  consola.info(`Received request to create request link.`);
+
+  const parsed = askCreationSchema.safeParse(req.body);
+  if (!parsed.success) {
+    const error = parsed.error.errors.map((e) => e.message).join(", ");
+    consola.warn(`Validation failed: ${error}`);
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error });
+    return;
+  }
+  const { period } = parsed.data;
+
+  let receiverShortId: string;
+  do {
+    receiverShortId = generateShortId();
+  } while (await db("secret_requests").where({ receiverShortId }).first());
+
+  let adminShortId: string;
+  do {
+    adminShortId = generateShortId();
+  } while (await db("secret_requests").where({ adminShortId }).first());
+
+  await db("secret_requests").insert({
+    adminShortId,
+    receiverShortId,
+    period,
+    expiresAt: null,
+  });
+
+  consola.success(
+    `Created secret request successfully: ${adminShortId}, ${receiverShortId}!`,
+  );
+  res.json({ adminShortId, receiverShortId });
+});
+
+/**
+ * GET /api/admin/:shortId
+ * Read your requested short id from the receiver.
+ */
+app.get("/api/admin/:shortId", async (req, res) => {
+  consola.info(`Received request to read requested secret.`);
+
+  const { shortId } = req.params;
+  const request = await db("secret_requests")
+    .where({ adminShortId: shortId })
+    .first();
+  if (!request) {
+    consola.warn(`Request not found: ${shortId}`);
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Request not found" });
+    return;
+  }
+
+  consola.success(`Retrieved secret request successfully: ${shortId}!`);
+  res.json({ content: request.content || "" });
+});
+
+/**
+ * GET /api/receiver/:shortId
+ * Read your requested short id.
+ */
+app.get("/api/receiver/:shortId", async (req, res) => {
+  consola.info(`Received request to read secret.`);
+
+  const { shortId } = req.params;
+  const request = await db("secret_requests")
+    .where({ receiverShortId: shortId })
+    .first();
+  if (!request) {
+    consola.warn(`Request not found: ${shortId}`);
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Request not found" });
+    return;
+  }
+
+  const { expiresAt, period } = request;
+  const now = new Date();
+  if (expiresAt === null) {
+    await db("secret_requests")
+      .where({ receiverShortId: shortId })
+      .update({
+        expiresAt: calculateExpirationDatetime({ amount: period, value: "m" }),
+      });
+  } else if (now > new Date(expiresAt)) {
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Secret has expired" });
+    return;
+  }
+
+  consola.success(`Retrieved secret successfully: ${shortId}!`);
+  res.json({ content: request.content || "" });
+});
+
+/**
+ * POST /api/receiver/:shortId
+ * Set the requested secret.
+ * Expected JSON body:
+ * {
+ *   content: string
+ * }
+ */
+app.post("/api/receiver/:shortId", async (req, res) => {
+  const { shortId } = req.params;
+  consola.info(`Received request to set requested secret: ${shortId}`);
+
+  const parsed = respondRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    const error = parsed.error.errors.map((e) => e.message).join(", ");
+    consola.warn(`Validation failed: ${error}`);
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error });
+    return;
+  }
+  const { content } = parsed.data;
+
+  const request = await db("secret_requests")
+    .where({ receiverShortId: shortId })
+    .first();
+  if (!request) {
+    consola.warn(`Request not found: ${shortId}`);
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Request not found" });
+    return;
+  }
+
+  const { expiresAt } = request;
+  const now = new Date();
+  if (expiresAt === null) {
+    console.warn(`Attempt made to set secret without using UI: ${shortId}`);
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: "Request not found" });
+    return;
+  } else if (now > new Date(expiresAt)) {
+    res.status(StatusCodes.NOT_FOUND).json({ message: "Request has expired" });
+    return;
+  }
+
+  await db("secret_requests")
+    .where({ receiverShortId: shortId })
+    .update({ content: content });
+
+  res.json({ content });
 });
 
 /**
